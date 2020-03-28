@@ -87,8 +87,8 @@ typedef long    LONG;
 #define TCCR1C          TCCR1A  /* dummy */
 #define TIMSK1          TIMSK
 #define TIFR1           TIFR
-#define SIG_USART_DATA  SIG_UART_DATA
-#define SIG_USART_RECV  SIG_UART_RECV
+#define SIG_USART_DATA  USART_UDRE_vect
+#define SIG_USART_RECV  USART_RXC_vect
 
 #elif defined (__AVR_ATmega16__)
 #define UBRR            UBRRL
@@ -122,25 +122,14 @@ typedef long    LONG;
 /* ----------------------- RS485 specifics ----------------------------------*/
 #ifdef  RTS_ENABLE
 
-#define RTS_PIN         PB0
-#define RTS_DDR         DDRB
-#define RTS_PORT        PORTB
-
 #define RTS_INIT        \
     do { \
-        RTS_DDR |= _BV( RTS_PIN ); \
-        RTS_PORT &= ~( _BV( RTS_PIN ) ); \
+        MODBUS_RS485_DIR_PIN.pushPull(); \
+        MODBUS_RS485_DIR_PIN.low(); \
     } while( 0 );
 
-#define RTS_HIGH        \
-    do { \
-        RTS_PORT |= _BV( RTS_PIN ); \
-    } while( 0 );
-
-#define RTS_LOW         \
-    do { \
-        RTS_PORT &= ~( _BV( RTS_PIN ) ); \
-    } while( 0 );
+#define RTS_HIGH MODBUS_RS485_DIR_PIN.high();
+#define RTS_LOW  MODBUS_RS485_DIR_PIN.low();
 
 #endif
 
