@@ -3,6 +3,7 @@ from dataclasses import field
 import yaml
 from typing import Dict, Optional, List
 
+from pydantic import Field
 from pydantic.dataclasses import dataclass
 
 
@@ -26,10 +27,16 @@ class GPIOPinDef:
 
 
 @dataclass
+class Modbus:
+    rs485_dir_pin: Optional[str] = None
+
+
+@dataclass
 class Components:
     systick: Optional[Systick] = None
     gpio: Optional[List[Dict[str, GPIOPinDef]]] = field(default_factory=list)
     serial: Optional[Serial] = None
+    modbus: Optional[Modbus] = None
 
 
 @dataclass

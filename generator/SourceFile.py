@@ -1,3 +1,4 @@
+import cgen
 import cgen as c
 
 from generator.Function import Function
@@ -5,9 +6,12 @@ from generator.IStatementsContainer import IStatementsContainer
 
 
 class SourceFile(IStatementsContainer):
-    def __init__(self):
+    def __init__(self, is_header: bool):
         self.includes = []
         self.objects = []
+
+        if is_header:
+            self.add(cgen.Pragma("once"))
         # self.objects += [c.Include(x) for x in includes]
 
     def add_include(self, path: str, system: bool):

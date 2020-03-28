@@ -23,6 +23,15 @@ public:
 		}
 	}
 
+	void stop()
+	{
+		ATOMIC_BLOCK(ATOMIC_FORCEON)
+		{
+			_remaining = 0;
+			_elapsed = 0;
+		}
+	}
+
 	uint16_t remaining() { return _remaining; }
 
 	bool elapsed()

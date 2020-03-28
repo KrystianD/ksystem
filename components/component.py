@@ -28,3 +28,10 @@ class IComponent:
 
     @abstractmethod
     def emit_loop(self, source_file): ...
+
+    def get_additional_source_files(self) -> List[str]:
+        return []
+
+    @abstractmethod
+    def get_additional_header_directories(self) -> List[str]:
+        return []

@@ -1,13 +1,18 @@
 import os
+from typing import Optional
 
 import cgen
 
+from components.Modbus import ModbusComponent
 from generator.SourceFile import SourceFile
 from components.GPIO import GPIOComponent
 from components.Serial import SerialComponent
 from components.Systick import SysTickComponent
 from config import load_config
 from generator.StatementsContainer import StatementsContainer
+from utils.utils import write_text_file
+
+script_dir = os.path.dirname(os.path.realpath(__file__))
 
 
 def main():
@@ -21,13 +26,35 @@ def main():
 
     cfg = load_config(args.config)
 
-    components = [
-        SerialComponent(cfg),
-        GPIOComponent(cfg),
-        SysTickComponent(cfg),
-    ]
+    components = []
 
-    source_file = SourceFile()
+    serial: Optional[SerialComponent] = None
+    systick: Optional[SysTickComponent] = None
+
+    if cfg.components.serial is not None:
+        serial = SerialComponent(cfg)
+        components.append(serial)
+
+    if cfg.components.systick is not None:
+        systick = SysTickComponent(cfg)
+        components.append(systick)
+
+    if cfg.components.gpio is not None:
+        gpio = GPIOComponent(cfg)
+        components.append(gpio)
+
+    if cfg.components.modbus is not None:
+        assert systick is not None
+        assert serial is not None
+
+        modbus = ModbusComponent(cfg)
+        systick.register_systimer("modbusTimer", False)
+        components.append(modbus)
+
+    ### SOURCE
+    source_file = SourceFile(is_header=False)
+
+    # source_file.add_include("stdint.h", True)
 
     for component in components:
         for path in component.get_source_includes():
@@ -66,9 +93,11 @@ def main():
         f.add(cgen.Statement("setup()"))
         f.add(cgen.For("", "", "", cgen.Block(loop_statements.statements)))
 
-    source_file.save(os.path.join(args.output_dir, "ksystem.cpp"))
+    ksystem_cpp_path = os.path.join(args.output_dir, "ksystem.cpp")
+    source_file.save(ksystem_cpp_path)
 
-    header_file = SourceFile()
+    ### HEADER
+    header_file = SourceFile(is_header=True)
 
     for component in components:
         for path in component.get_header_includes():
@@ -81,6 +110,36 @@ def main():
         header_file.add_blank()
 
     header_file.save(os.path.join(args.output_dir, "ksystem.h"))
+
+    ### CMAKE
+    sources = [ksystem_cpp_path]
+    include_dirs = []
+
+    for component in components:
+        sources += component.get_additional_source_files()
+        include_dirs += component.get_additional_header_directories()
+
+    sources = [os.path.join(script_dir, x) for x in sources]
+    include_dirs = [os.path.join(script_dir, x) for x in include_dirs]
+
+    nl = "\n  "
+
+    cmake_content = f"""
+add_definitions(-DF_CPU={cfg.frequency})
+
+include_directories(generated)
+include_directories({os.path.join(script_dir, "library")})
+
+add_avr_library(ksystem STATIC
+  {nl.join(sources)}
+)
+
+avr_target_include_directories(ksystem PUBLIC
+  {nl.join(include_dirs)}
+)
+""".lstrip()
+
+    write_text_file(os.path.join(args.output_dir, "ksystem.cmake"), cmake_content)
 
 
 if __name__ == "__main__":
