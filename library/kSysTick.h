@@ -5,6 +5,8 @@
 
 #include <stdint.h>
 
+extern void kSysTickElapsed();
+
 template<int Overflows, int Remainder>
 class kSysTick
 {
@@ -26,6 +28,7 @@ public:
 			OCR2 = Remainder - 1;
 			_nextStep = 1;
 			_ticks++;
+			kSysTickElapsed();
 		}
 		else {
 			if (_overflowCounter == Overflows) {
@@ -33,6 +36,7 @@ public:
 				_overflowCounter = 0;
 				_nextStep = 1;
 				_ticks++;
+				kSysTickElapsed();
 			}
 			else if (_overflowCounter == Overflows - 1) {
 				OCR2 = Remainder - 1;
@@ -43,7 +47,6 @@ public:
 			}
 		}
 	}
-
 
 	static bool elapsed()
 	{

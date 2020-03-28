@@ -1,9 +1,10 @@
 import cgen as c
 
 from generator.Function import Function
+from generator.IStatementsContainer import IStatementsContainer
 
 
-class SourceFile:
+class SourceFile(IStatementsContainer):
     def __init__(self):
         self.includes = []
         self.objects = []
@@ -29,9 +30,6 @@ class SourceFile:
                 self.objects.append(x)
         else:
             self.objects.append(statement)
-
-    def add_blank(self):
-        self.add(c.Line())
 
     def save(self, path: str):
         with open(path, "wt") as f:

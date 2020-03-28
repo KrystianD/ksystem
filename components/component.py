@@ -25,3 +25,6 @@ class IComponent:
 
     @abstractmethod
     def emit_initialization(self, source_file): ...
+
+    @abstractmethod
+    def emit_loop(self, source_file): ...

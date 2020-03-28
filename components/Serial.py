@@ -51,3 +51,6 @@ FILE uart_stdout = {
             source_file.add(cgen.Line())
             source_file.add(cgen.LineComment(f"Setup stdio"))
             source_file.add(cgen.Statement(f"stdout = &uart_stdout"))
+
+    def emit_loop(self, source_file):
+        pass

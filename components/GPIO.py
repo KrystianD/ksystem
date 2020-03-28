@@ -50,3 +50,6 @@ class GPIOComponent(IComponent):
 
             if definition.value is True:
                 source_file.add(cgen.Statement(f"{name}.high()"))
+
+    def emit_loop(self, source_file):
+        pass

@@ -7,6 +7,7 @@ from components.GPIO import GPIOComponent
 from components.Serial import SerialComponent
 from components.Systick import SysTickComponent
 from config import load_config
+from generator.StatementsContainer import StatementsContainer
 
 
 def main():
@@ -38,7 +39,8 @@ def main():
     for component in components:
         component.emit_global_variables(source_file)
 
-    source_file.add(cgen.Statement("extern void run()"))
+    source_file.add(cgen.Statement("extern void setup()"))
+    source_file.add(cgen.Statement("extern void loop()"))
     source_file.add(cgen.Line())
 
     for component in components:
@@ -53,7 +55,16 @@ def main():
             component.emit_initialization(f)
             f.add_blank()
 
-        f.add(cgen.Statement("run()"))
+        loop_statements = StatementsContainer()
+        loop_statements.add("loop()")
+
+        for component in components:
+            loop_statements.add_blank()
+            loop_statements.add(cgen.LineComment(f"Component: {type(component).__name__}"))
+            component.emit_loop(loop_statements)
+
+        f.add(cgen.Statement("setup()"))
+        f.add(cgen.For("", "", "", cgen.Block(loop_statements.statements)))
 
     source_file.save(os.path.join(args.output_dir, "ksystem.cpp"))
 

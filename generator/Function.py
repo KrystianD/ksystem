@@ -1,12 +1,14 @@
 import cgen as c
 
+from generator.StatementsContainer import StatementsContainer
 
-class Function:
+
+class Function(StatementsContainer):
     def __init__(self, sourcefile, ret_type: str, name: str):
+        super().__init__()
         self.sourcefile = sourcefile
         self.ret_type = ret_type
         self.name = name
-        self.statements = []
 
     def __enter__(self):
         return self
@@ -18,13 +20,3 @@ class Function:
         )
 
         self.sourcefile.objects.append(func)
-
-    def add(self, statement):
-        if isinstance(statement, list):
-            for x in statement:
-                self.statements.append(x)
-        else:
-            self.statements.append(statement)
-
-    def add_blank(self):
-        self.add(c.Line())
