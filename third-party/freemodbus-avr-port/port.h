@@ -31,6 +31,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#ifdef __cplusplus
+#include <ksystem.h>
+#endif
+
 /* ----------------------- Defines ------------------------------------------*/
 #define	INLINE                      inline
 #define PR_BEGIN_EXTERN_C           extern "C" {
@@ -120,7 +124,7 @@ typedef long    LONG;
 #endif
 
 /* ----------------------- RS485 specifics ----------------------------------*/
-#ifdef  RTS_ENABLE
+#ifdef  MODBUS_RS485_DIR_PIN
 
 #define RTS_INIT        \
     do { \

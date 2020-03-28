@@ -43,7 +43,7 @@
 void
 vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 {
-#ifdef RTS_ENABLE
+#ifdef MODBUS_RS485_DIR_PIN
     Serial.enableTxCompletionInterrupt();
 #endif
 
@@ -61,7 +61,7 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
     if( xTxEnable )
     {
         Serial.enableRxDataReadyInterrupt();
-#ifdef RTS_ENABLE
+#ifdef MODBUS_RS485_DIR_PIN
         RTS_HIGH;
 #endif
     }
@@ -76,7 +76,7 @@ xMBPortSerialInit( UCHAR ucPORT, ULONG ulBaudRate, UCHAR ucDataBits, eMBParity e
 {
 	  Serial.enableTx();
     vMBPortSerialEnable( FALSE, FALSE );
-#ifdef RTS_ENABLE
+#ifdef MODBUS_RS485_DIR_PIN
     RTS_INIT;
 #endif
     return TRUE;
@@ -106,7 +106,7 @@ SIGNAL( USART_RXC_vect )
     pxMBFrameCBByteReceived(  );
 }
 
-#ifdef RTS_ENABLE
+#ifdef MODBUS_RS485_DIR_PIN
 SIGNAL( USART_TXC_vect )
 {
     RTS_LOW;
