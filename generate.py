@@ -82,6 +82,10 @@ def main():
             component.emit_initialization(f)
             f.add_blank()
 
+        f.add(cgen.Statement("setup()"))
+        
+        f.add(cgen.Statement("sei()"))
+
         loop_statements = StatementsContainer()
         loop_statements.add("loop()")
 
@@ -90,7 +94,6 @@ def main():
             loop_statements.add(cgen.LineComment(f"Component: {type(component).__name__}"))
             component.emit_loop(loop_statements)
 
-        f.add(cgen.Statement("setup()"))
         f.add(cgen.For("", "", "", cgen.Block(loop_statements.statements)))
 
     ksystem_cpp_path = os.path.join(args.output_dir, "ksystem.cpp")
