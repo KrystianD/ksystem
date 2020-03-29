@@ -83,7 +83,7 @@ def main():
             f.add_blank()
 
         f.add(cgen.Statement("setup()"))
-        
+
         f.add(cgen.Statement("sei()"))
 
         loop_statements = StatementsContainer()

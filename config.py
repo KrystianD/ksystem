@@ -8,9 +8,16 @@ from pydantic.dataclasses import dataclass
 
 
 @dataclass
+class SysTimerDef:
+    name: str
+    repeat: bool
+
+
+@dataclass
 class Systick:
     frequency: int
     timer: int
+    systimers: List[SysTimerDef] = field(default_factory=list)
 
 
 @dataclass
