@@ -115,7 +115,7 @@ def main():
     header_file.save(os.path.join(args.output_dir, "ksystem.h"))
 
     ### CMAKE
-    sources = [ksystem_cpp_path]
+    sources = []
     include_dirs = []
 
     for component in components:
@@ -134,6 +134,7 @@ include_directories(generated)
 include_directories({os.path.join(script_dir, "library")})
 
 add_avr_library(ksystem STATIC
+  ${{CMAKE_CURRENT_LIST_DIR}}/ksystem.cpp
   {nl.join(sources)}
 )
 
