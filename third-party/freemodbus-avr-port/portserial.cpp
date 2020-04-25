@@ -49,13 +49,13 @@ vMBPortSerialEnable( BOOL xRxEnable, BOOL xTxEnable )
 
     if( xRxEnable )
     {
-        Serial.enableRx();
         Serial.enableRxCompletionInterrupt();
+        Serial.enableRx();
     }
     else
     {
-        Serial.disableRx();
         Serial.disableRxCompletionInterrupt();
+        Serial.disableRx();
     }
 
     if( xTxEnable )
