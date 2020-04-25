@@ -11,6 +11,7 @@ from pydantic.dataclasses import dataclass
 class SysTimerDef:
     name: str
     repeat: bool
+    handler: bool
 
 
 @dataclass

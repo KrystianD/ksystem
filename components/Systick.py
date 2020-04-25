@@ -35,8 +35,8 @@ class SysTickComponent(IComponent):
 
         self.systimers: List[SysTimerDef] = self.systick.systimers
 
-    def register_systimer(self, name: str, restarting: bool):
-        self.systimers.append(SysTimerDef(name=name, repeat=restarting))
+    def register_systimer(self, name: str, restarting: bool, handler: bool):
+        self.systimers.append(SysTimerDef(name=name, repeat=restarting, handler=handler))
 
     def get_source_includes(self) -> List[str]:
         return [
@@ -56,7 +56,10 @@ class SysTickComponent(IComponent):
 
         for systimer in self.systimers:
             source_file.add(cgen.Statement(f"extern void {systimer.name}Elapsed()"))
-            source_file.add(cgen.Statement(f"extern kSysTimer<{systick_interval},{systimer.name}Elapsed,{'true' if systimer.repeat else 'false'}> {systimer.name}"))
+            handler = "nullptr"
+            if systimer.handler is True:
+                handler = f"{systimer.name}Elapsed"
+            source_file.add(cgen.Statement(f"extern kSysTimer<{systick_interval},{handler},{'true' if systimer.repeat else 'false'}> {systimer.name}"))
 
     def emit_global_variables(self, source_file):
         systick_interval = int(1000 / self.systick.frequency)
@@ -67,7 +70,10 @@ class SysTickComponent(IComponent):
         source_file.add(cgen.Line())
 
         for systimer in self.systimers:
-            source_file.add(cgen.Statement(f"kSysTimer<{systick_interval},{systimer.name}Elapsed,{'true' if systimer.repeat else 'false'}> {systimer.name}"))
+            handler = "nullptr"
+            if systimer.handler is True:
+                handler = f"{systimer.name}Elapsed"
+            source_file.add(cgen.Statement(f"kSysTimer<{systick_interval},{handler},{'true' if systimer.repeat else 'false'}> {systimer.name}"))
 
     def emit_helper_functions(self, source_file: SourceFile):
         source_file.add(cgen.Line("""SIGNAL(TIMER2_COMP_vect)"""))

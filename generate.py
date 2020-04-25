@@ -48,7 +48,7 @@ def main():
         assert serial is not None
 
         modbus = ModbusComponent(cfg)
-        systick.register_systimer("modbusTimer", False)
+        systick.register_systimer("modbusTimer", False, handler=True)
         components.append(modbus)
 
     ### SOURCE
