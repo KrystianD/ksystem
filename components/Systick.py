@@ -51,7 +51,7 @@ class SysTickComponent(IComponent):
     def emit_extern_global_variables(self, source_file):
         systick_interval = int(1000 / self.systick.frequency)
 
-        source_file.add(cgen.Statement(f"using kConfiguredSysTick = kSysTick<{self.systick_overflows},{self.systick_remainder}>"))
+        source_file.add(cgen.Statement(f"typedef kSysTick<{self.systick_overflows},{self.systick_remainder}> kConfiguredSysTick"))
         source_file.add(cgen.Statement(f"static kConfiguredSysTick SysTick"))
 
         for systimer in self.systimers:
