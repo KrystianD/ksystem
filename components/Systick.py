@@ -7,7 +7,7 @@ from components.component import IComponent
 from config import SysTimerDef
 from generator.IStatementsContainer import IStatementsContainer
 from generator.SourceFile import SourceFile
-from hardware.timer2 import configure_timer2, Timer2Mode
+from hardware.timer2 import configure_timer2, Timer2Mode, timer2_prescalers
 
 
 class SysTickComponent(IComponent):
@@ -17,11 +17,15 @@ class SysTickComponent(IComponent):
 
         f_cpu = self.cfg.frequency
 
-        systick_prescaler = 256
-        systick_count = f_cpu // self.cfg.components.systick.frequency // systick_prescaler
-        systick_real_interval = f_cpu // systick_count // systick_prescaler
+        for presc in reversed(timer2_prescalers[1:]):
+            self.systick_prescaler = presc
+            systick_count = f_cpu // self.cfg.components.systick.frequency // self.systick_prescaler
+            systick_real_interval = f_cpu // systick_count // self.systick_prescaler
 
-        systick_error = (systick_real_interval / self.cfg.components.systick.frequency - 1) * 100
+            systick_error = (systick_real_interval / self.cfg.components.systick.frequency - 1) * 100
+            if systick_error == 0:
+                break
+
         assert systick_error == 0
 
         self.systick_overflows = systick_count // 256
@@ -74,7 +78,7 @@ class SysTickComponent(IComponent):
                 f.add(cgen.Statement(f"{systimer.name}.handleTick()"))
 
     def emit_initialization(self, source_file):
-        source_file.add(configure_timer2(Timer2Mode.CTC, prescaler=256,
+        source_file.add(configure_timer2(Timer2Mode.CTC, prescaler=self.systick_prescaler,
                                          initial_value=0, compare_value=255,
                                          interrupt_match_enabled=True, interrupt_overflow_enabled=False))
 
