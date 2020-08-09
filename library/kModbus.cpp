@@ -3,7 +3,7 @@
 #include <mb.h>
 #include <mbport.h>
 
-int16_t swapS16(int16_t val)
+uint16_t swapU16(uint16_t val)
 {
 	return (val << 8) | ((val >> 8) & 0xFF);
 }
@@ -27,12 +27,14 @@ void kModbus::process()
 
 eMBErrorCode eMBRegInputCB(UCHAR* pucRegBuffer, USHORT usAddress, USHORT usNRegs)
 {
-	for (uint16_t i = 0; i < usNRegs; i++) {
-		ModbusResult val = modbusHandleReadInputRegister(usAddress + i);
-		if (!val.success)
+	uint16_t* wordPtr = (uint16_t*)pucRegBuffer;
+
+	for (uint16_t i = 0; i < usNRegs;) {
+		ModbusReturnValue value = { .buffer = &wordPtr[i], .pIdx=&i };
+		bool res = modbusHandleReadInputRegister(usAddress + i, value);
+		if (!res)
 			return MB_ENOREG;
-		pucRegBuffer[i * 2 + 0] = val.value.b1;
-		pucRegBuffer[i * 2 + 1] = val.value.b0;
+#endif
 	}
 
 	return MB_ENOERR;
@@ -40,18 +42,20 @@ eMBErrorCode eMBRegInputCB(UCHAR* pucRegBuffer, USHORT usAddress, USHORT usNRegs
 
 eMBErrorCode eMBRegHoldingCB(UCHAR* pucRegBuffer, USHORT usAddress, USHORT usNRegs, eMBRegisterMode eMode)
 {
+	uint16_t* wordPtr = (uint16_t*)pucRegBuffer;
+
 	if (eMode == MB_REG_READ) {
-		for (uint16_t i = 0; i < usNRegs; i++) {
-			ModbusResult val = modbusHandleReadHoldingRegister(usAddress + i);
-			if (!val.success)
+		for (uint16_t i = 0; i < usNRegs;) {
+			ModbusReturnValue value = { .buffer = &wordPtr[i], .pIdx=&i };
+			bool res = modbusHandleReadHoldingRegister(usAddress + i, value);
+			if (!res)
 				return MB_ENOREG;
-			pucRegBuffer[i * 2 + 0] = val.value.b1;
-			pucRegBuffer[i * 2 + 1] = val.value.b0;
+#endif
 		}
 	}
 	else {
 		for (uint16_t i = 0; i < usNRegs; i++) {
-			uint16_t value = swapS16(((uint16_t*)pucRegBuffer)[i]);
+			uint16_t value = swapU16(wordPtr[i]);
 			if (!modbusHandleWriteHoldingRegister(usAddress + i, ModbusValue::U16(value)))
 				return MB_ENOREG;
 		}
@@ -70,10 +74,13 @@ eMBErrorCode eMBRegCoilsCB(UCHAR* pucRegBuffer, USHORT usAddress, USHORT usNCoil
 			CoilResult res = modbusHandleReadCoil(usAddress + i);
 
 			switch (res) {
-				case CoilResult::NoCoil: return MB_ENOREG;
-				case CoilResult::High: pucRegBuffer[i / 8] |= 1 << (i % 8);
+				case CoilResult::NoCoil:
+					return MB_ENOREG;
+				case CoilResult::High:
+					pucRegBuffer[i / 8] |= 1 << (i % 8);
 					break;
-				case CoilResult::Low: pucRegBuffer[i / 8] &= ~(1 << (i % 8));
+				case CoilResult::Low:
+					pucRegBuffer[i / 8] &= ~(1 << (i % 8));
 					break;
 			}
 		}

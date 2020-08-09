@@ -2,6 +2,59 @@
 
 #include <stdint.h>
 
+uint16_t swapU16(uint16_t val);
+
+struct ModbusReturnValue
+{
+	uint16_t* buffer;
+	uint16_t* pIdx;
+
+	bool U16(uint16_t val)
+	{
+		buffer[0] = swapU16(val);
+		*pIdx += 1;
+		return true;
+	}
+	bool S16(int16_t val)
+	{
+		buffer[0] = swapU16(val);
+		*pIdx += 1;
+		return true;
+	}
+	bool U32LE(uint32_t val)
+	{
+		uint16_t* pVal = (uint16_t*)&val;
+		buffer[0] = swapU16(pVal[0]);
+		buffer[1] = swapU16(pVal[1]);
+		*pIdx += 2;
+		return true;
+	}
+	bool U32BE(uint32_t val)
+	{
+		uint16_t* pVal = (uint16_t*)&val;
+		buffer[0] = swapU16(pVal[1]);
+		buffer[1] = swapU16(pVal[0]);
+		*pIdx += 2;
+		return true;
+	}
+	bool S32LE(int32_t val)
+	{
+		uint16_t* pVal = (uint16_t*)&val;
+		buffer[0] = swapU16(pVal[0]);
+		buffer[1] = swapU16(pVal[1]);
+		*pIdx += 2;
+		return true;
+	}
+	bool S32BE(int32_t val)
+	{
+		uint16_t* pVal = (uint16_t*)&val;
+		buffer[0] = swapU16(pVal[1]);
+		buffer[1] = swapU16(pVal[0]);
+		*pIdx += 2;
+		return true;
+	}
+};
+
 struct ModbusValue
 {
 	union
@@ -36,9 +89,9 @@ enum class CoilResult
 	Low,
 };
 
-extern ModbusResult modbusHandleReadInputRegister(uint16_t address);
+extern bool modbusHandleReadInputRegister(uint16_t address, ModbusReturnValue& value);
 
-extern ModbusResult modbusHandleReadHoldingRegister(uint16_t address);
+extern bool modbusHandleReadHoldingRegister(uint16_t address, ModbusReturnValue& value);
 extern bool modbusHandleWriteHoldingRegister(uint16_t address, ModbusValue value);
 
 extern CoilResult modbusHandleReadCoil(uint16_t address);
