@@ -8,7 +8,7 @@ from generator.SourceFile import SourceFile
 from components.GPIO import GPIOComponent
 from components.Serial import SerialComponent
 from components.Systick import SysTickComponent
-from config import load_config
+from config import load_config, SysTimerDef
 from generator.StatementsContainer import StatementsContainer
 from utils.utils import write_text_file
 
@@ -48,7 +48,7 @@ def main():
         assert serial is not None
 
         modbus = ModbusComponent(cfg)
-        systick.register_systimer("modbusTimer", False, handler=True)
+        systick.register_systimer(SysTimerDef(name="modbusTimer", repeat=False, handler=True, required_accuracy=1))
         components.append(modbus)
 
     ### SOURCE
@@ -57,6 +57,8 @@ def main():
     # source_file.add_include("stdint.h", True)
 
     for component in components:
+        if not component.verify():
+            exit(1)
         for path in component.get_source_includes():
             if path is not None:
                 source_file.add_include(path, True)

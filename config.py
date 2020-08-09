@@ -12,6 +12,7 @@ class SysTimerDef:
     name: str
     repeat: bool
     handler: bool
+    required_accuracy: float = None
 
 
 @dataclass

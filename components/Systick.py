@@ -35,8 +35,8 @@ class SysTickComponent(IComponent):
 
         self.systimers: List[SysTimerDef] = self.systick.systimers
 
-    def register_systimer(self, name: str, restarting: bool, handler: bool):
-        self.systimers.append(SysTimerDef(name=name, repeat=restarting, handler=handler))
+    def register_systimer(self, config: SysTimerDef):
+        self.systimers.append(config)
 
     def get_source_includes(self) -> List[str]:
         return [
@@ -47,6 +47,17 @@ class SysTickComponent(IComponent):
             "kSysTick.h",
             "kSysTimer.h",
         ]
+
+    def verify(self):
+        systick_interval = int(1000 / self.systick.frequency)
+
+        all_ok = True
+        for systimer in self.systimers:
+            if systimer.required_accuracy is not None and systimer.required_accuracy < systick_interval:
+                print(f"Systimer {systimer.name} accuracy requirement not met", systimer.required_accuracy)
+                all_ok = False
+
+        return all_ok
 
     def emit_extern_global_variables(self, source_file):
         systick_interval = int(1000 / self.systick.frequency)

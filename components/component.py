@@ -9,6 +9,10 @@ class IComponent:
         self.cfg = cfg
 
     @abstractmethod
+    def verify(self) -> bool:
+        return True
+
+    @abstractmethod
     def get_source_includes(self) -> List[str]: ...
 
     @abstractmethod
@@ -25,6 +29,9 @@ class IComponent:
 
     @abstractmethod
     def emit_initialization(self, source_file): ...
+
+    @abstractmethod
+    def emit_internal_header(self, source_file): ...
 
     @abstractmethod
     def emit_loop(self, source_file): ...
