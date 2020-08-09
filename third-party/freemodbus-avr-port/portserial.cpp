@@ -33,6 +33,7 @@
 #include "mbport.h"
 
 #include <ksystem.h>
+#include <ksystem_internal.h>
 
 #define UART_BAUD_RATE          9600
 #define UART_BAUD_CALC(UART_BAUD_RATE,F_OSC) \

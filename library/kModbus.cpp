@@ -32,6 +32,10 @@ eMBErrorCode eMBRegInputCB(UCHAR* pucRegBuffer, USHORT usAddress, USHORT usNRegs
 	for (uint16_t i = 0; i < usNRegs;) {
 		ModbusReturnValue value = { .buffer = &wordPtr[i], .pIdx=&i };
 		bool res = modbusHandleReadInputRegister(usAddress + i, value);
+#ifdef MODBUS_MISSING_AS_ZERO
+		if (!res)
+			value.U16(0);
+#else
 		if (!res)
 			return MB_ENOREG;
 #endif
@@ -48,6 +52,10 @@ eMBErrorCode eMBRegHoldingCB(UCHAR* pucRegBuffer, USHORT usAddress, USHORT usNRe
 		for (uint16_t i = 0; i < usNRegs;) {
 			ModbusReturnValue value = { .buffer = &wordPtr[i], .pIdx=&i };
 			bool res = modbusHandleReadHoldingRegister(usAddress + i, value);
+#ifdef MODBUS_MISSING_AS_ZERO
+			if (!res)
+				value.U16(0);
+#else
 			if (!res)
 				return MB_ENOREG;
 #endif

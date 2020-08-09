@@ -37,7 +37,10 @@ class GPIOPinDef:
 
 @dataclass
 class Modbus:
+    missing_as_zero: bool
     rs485_dir_pin: Optional[str] = None
+
+    functions: List[str] = None
 
 
 @dataclass

@@ -35,6 +35,8 @@
 #include <ksystem.h>
 #endif
 
+#include <ksystem_internal.h>
+
 /* ----------------------- Defines ------------------------------------------*/
 #define	INLINE                      inline
 #define PR_BEGIN_EXTERN_C           extern "C" {

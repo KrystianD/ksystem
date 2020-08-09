@@ -116,6 +116,16 @@ def main():
 
     header_file.save(os.path.join(args.output_dir, "ksystem.h"))
 
+    ### INTERNAL HEADER
+    internal_header_file = SourceFile(is_header=True)
+
+    for component in components:
+        internal_header_file.add(cgen.LineComment(f"Component: {type(component).__name__}"))
+        component.emit_internal_header(internal_header_file)
+        internal_header_file.add_blank()
+
+    internal_header_file.save(os.path.join(args.output_dir, "ksystem_internal.h"))
+
     ### CMAKE
     sources = []
     include_dirs = []
