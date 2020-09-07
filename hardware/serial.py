@@ -17,6 +17,7 @@ def configure_serial(cfg: Config, baudrate: int):
     err2 = (bd2 / baudrate - 1) * 100
 
     min_err = min(abs(err1), abs(err2))
+    print(f"Serial error: {min_err}")
     if min_err >= 3:
         raise Exception("too big error")
 
