@@ -148,7 +148,7 @@ def main():
     cmake_content = f"""
 add_definitions(-DF_CPU={cfg.frequency})
 
-include_directories(generated)
+include_directories(${{CMAKE_CURRENT_LIST_DIR}})
 include_directories({get_path("library")})
 
 add_avr_library(ksystem STATIC
