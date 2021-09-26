@@ -59,9 +59,9 @@ def main():
     for component in components:
         if not component.verify():
             exit(1)
-        for path in component.get_source_includes():
-            if path is not None:
-                source_file.add_include(path, True)
+        for src_path in component.get_source_includes():
+            if src_path is not None:
+                source_file.add_include(src_path, True)
 
     source_file.add_include("ksystem.h", system=False)
 
@@ -105,9 +105,9 @@ def main():
     header_file = SourceFile(is_header=True)
 
     for component in components:
-        for path in component.get_header_includes():
-            if path is not None:
-                header_file.add_include(path, True)
+        for header_path in component.get_header_includes():
+            if header_path is not None:
+                header_file.add_include(header_path, True)
 
     for component in components:
         header_file.add(cgen.LineComment(f"Component: {type(component).__name__}"))
