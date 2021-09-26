@@ -63,7 +63,7 @@ class SysTickComponent(IComponent):
         systick_interval = int(1000 / self.systick.frequency)
 
         source_file.add(cgen.Statement(f"typedef kSysTick<{self.systick_overflows},{self.systick_remainder}> kConfiguredSysTick"))
-        source_file.add(cgen.Statement(f"static kConfiguredSysTick SysTick"))
+        source_file.add(cgen.Statement(f"typedef kConfiguredSysTick SysTick"))
 
         for systimer in self.systimers:
             source_file.add(cgen.Statement(f"extern void {systimer.name}Elapsed()"))
@@ -88,7 +88,7 @@ class SysTickComponent(IComponent):
 
     def emit_helper_functions(self, source_file: SourceFile):
         source_file.add(cgen.Line("""SIGNAL(TIMER2_COMP_vect)"""))
-        source_file.add(cgen.Block([cgen.Statement("SysTick.handleInterrupt()")]))
+        source_file.add(cgen.Block([cgen.Statement("SysTick::handleInterrupt()")]))
 
         with source_file.function("void", "kSysTickElapsed") as f:
             for systimer in self.systimers:
@@ -99,7 +99,7 @@ class SysTickComponent(IComponent):
                                          initial_value=0, compare_value=255,
                                          interrupt_match_enabled=True, interrupt_overflow_enabled=False))
 
-        source_file.add(cgen.Statement("SysTick.init()"))
+        source_file.add(cgen.Statement("SysTick::init()"))
 
     def emit_loop(self, source_file: IStatementsContainer):
         for systimer in self.systimers:
