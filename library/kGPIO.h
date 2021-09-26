@@ -25,5 +25,6 @@ public:
 	}
 
 	bool read() { return PIN_FROM_PORT(_SFR_IO8(PortAddr)) & (1u << Pin); }
+	bool isLow() { return !read(); }
 };
 
