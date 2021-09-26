@@ -134,8 +134,14 @@ def main():
         sources += component.get_additional_source_files()
         include_dirs += component.get_additional_header_directories()
 
-    sources = [os.path.join(script_dir, x) for x in sources]
-    include_dirs = [os.path.join(script_dir, x) for x in include_dirs]
+    output_dir_abs = os.path.abspath(args.output_dir)
+
+    def get_path(path: str):
+        path_abs = os.path.join(script_dir, path)
+        return '${CMAKE_CURRENT_LIST_DIR}/' + os.path.relpath(path_abs, output_dir_abs)
+
+    sources = [get_path(x) for x in sources]
+    include_dirs = [get_path(x) for x in include_dirs]
 
     nl = "\n  "
 
@@ -143,7 +149,7 @@ def main():
 add_definitions(-DF_CPU={cfg.frequency})
 
 include_directories(generated)
-include_directories({os.path.join(script_dir, "library")})
+include_directories({get_path("library")})
 
 add_avr_library(ksystem STATIC
   ${{CMAKE_CURRENT_LIST_DIR}}/ksystem.cpp
