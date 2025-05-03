@@ -20,6 +20,10 @@ def main():
         from family.atmega.config import Config
         from family.atmega.generator import AtmegaGenerator
         AtmegaGenerator(load_config(args.config, Config), args.output_dir).build()
+    elif cfg["family"] == "attiny":
+        from family.attiny.config import Config
+        from family.attiny.generator import AttinyGenerator
+        AttinyGenerator(load_config(args.config, Config), args.output_dir).build()
     else:
         print("invalid family")
         exit(1)
