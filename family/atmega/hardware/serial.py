@@ -1,6 +1,6 @@
 import cgen as c
 
-from config import Config
+from family.atmega.config import Config
 from utils.utils import create_bitfield
 
 

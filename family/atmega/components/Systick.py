@@ -1,18 +1,17 @@
-from dataclasses import dataclass
 from typing import List
 
 import cgen
 
-from components.component import IComponent
-from config import SysTimerDef
+from common.component import IComponent
+from family.atmega.config import SysTimerDef
+from family.atmega.hardware.timer2 import configure_timer2, Timer2Mode, timer2_prescalers
 from generator.IStatementsContainer import IStatementsContainer
 from generator.SourceFile import SourceFile
-from hardware.timer2 import configure_timer2, Timer2Mode, timer2_prescalers
 
 
 class SysTickComponent(IComponent):
     def __init__(self, cfg):
-        super().__init__(cfg)
+        self.cfg = cfg
         self.systick = self.cfg.components.systick
 
         f_cpu = self.cfg.frequency

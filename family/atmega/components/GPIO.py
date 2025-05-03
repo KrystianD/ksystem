@@ -2,13 +2,13 @@ from typing import List, Tuple
 
 import cgen
 
-from components.component import IComponent
-from config import GPIOPinDef
+from common.component import IComponent
+from family.atmega.config import GPIOPinDef
 
 
 class GPIOComponent(IComponent):
     def __init__(self, cfg):
-        super().__init__(cfg)
+        self.cfg = cfg
         self.gpio = self.cfg.components.gpio
 
         self.definitions: List[Tuple[str, GPIOPinDef]] = [(list(x)[0], x[list(x)[0]]) for x in self.gpio]

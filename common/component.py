@@ -1,13 +1,8 @@
 from abc import abstractmethod
 from typing import List
 
-from config import Config
-
 
 class IComponent:
-    def __init__(self, cfg: Config):
-        self.cfg = cfg
-
     @abstractmethod
     def verify(self) -> bool:
         return True

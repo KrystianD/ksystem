@@ -2,14 +2,13 @@ from typing import List
 
 import cgen
 
-from components.component import IComponent
+from common.component import IComponent
 from generator.IStatementsContainer import IStatementsContainer
-from hardware.timer2 import configure_timer2, Timer2Mode
 
 
 class ModbusComponent(IComponent):
     def __init__(self, cfg):
-        super().__init__(cfg)
+        self.cfg = cfg
         self.modbus = cfg.components.modbus
 
     def get_source_includes(self) -> List[str]:

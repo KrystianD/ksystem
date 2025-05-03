@@ -2,13 +2,13 @@ from typing import List
 
 import cgen
 
-from components.component import IComponent
-from hardware.serial import configure_serial
+from common.component import IComponent
+from family.atmega.hardware.serial import configure_serial
 
 
 class SerialComponent(IComponent):
     def __init__(self, cfg):
-        super().__init__(cfg)
+        self.cfg = cfg
         self.serial = self.cfg.components.serial
 
     def get_source_includes(self) -> List[str]:

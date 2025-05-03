@@ -3,7 +3,7 @@ from dataclasses import field
 import yaml
 from typing import Dict, Optional, List
 
-from pydantic import Field
+from pydantic import Field, Extra
 from pydantic.dataclasses import dataclass
 
 
@@ -53,21 +53,6 @@ class Components:
 
 @dataclass
 class Config:
+    family: str
     frequency: int
     components: Components
-
-
-config: Optional[Config] = None
-
-
-def load_config(path: str) -> Config:
-    global config
-    config = Config(**yaml.load(open(path, "rt"), Loader=yaml.SafeLoader))  # type: ignore
-    return config
-
-
-def get_config() -> Config:
-    global config
-    if config is None:
-        raise Exception("no config")
-    return config
