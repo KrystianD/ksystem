@@ -96,6 +96,8 @@ class BaseGenerator:
         ### HEADER
         header_file = SourceFile(is_header=True)
 
+        header_file.add_include("kdevice.h", system=False)
+
         for component in self._components:
             for header_path in component.get_header_includes():
                 if header_path is not None:
