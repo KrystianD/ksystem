@@ -40,6 +40,8 @@ class BaseGenerator:
         self._components.append(component)
 
     def build(self):
+        self.prepare_components()
+
         ### SOURCE
         source_file = SourceFile(is_header=False)
 
