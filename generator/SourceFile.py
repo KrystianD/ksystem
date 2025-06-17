@@ -9,10 +9,7 @@ class SourceFile(IStatementsContainer):
     def __init__(self, is_header: bool):
         self.includes = []
         self.objects = []
-
-        if is_header:
-            self.add(cgen.Pragma("once"))
-        # self.objects += [c.Include(x) for x in includes]
+        self.is_header = is_header
 
     def add_include(self, path: str, system: bool):
         self.includes.append(c.Include(path, system))
@@ -22,6 +19,9 @@ class SourceFile(IStatementsContainer):
 
     def generate(self):
         objects = []
+        if self.is_header:
+            objects.append(cgen.Pragma("once"))
+        objects += [c.Line()]
         objects += self.includes
         objects += [c.Line()]
         objects += self.objects
