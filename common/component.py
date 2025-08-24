@@ -14,6 +14,10 @@ class IComponent:
     def get_header_includes(self) -> List[str]: ...
 
     @abstractmethod
+    def get_internal_header_includes(self) -> List[str]:
+        return []
+
+    @abstractmethod
     def emit_extern_global_variables(self, source_file): ...
 
     @abstractmethod

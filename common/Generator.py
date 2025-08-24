@@ -114,6 +114,10 @@ class BaseGenerator:
         internal_header_file = SourceFile(is_header=True)
 
         for component in self._components:
+            for header_path in component.get_internal_header_includes():
+                if header_path is not None:
+                    internal_header_file.add_include(header_path, False)
+
             internal_header_file.add(cgen.LineComment(f"Component: {type(component).__name__}"))
             component.emit_internal_header(internal_header_file)
             internal_header_file.add_blank()
