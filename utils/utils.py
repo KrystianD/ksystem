@@ -3,10 +3,16 @@ from typing import List, TypeVar, Type
 import yaml
 
 
-def create_bitfield(names: List[str]):
+def create_bitfield_BV(names: List[str]):
     if len(names) == 0:
         return 0
     return " | ".join(f"_BV({x})" for x in names)
+
+
+def create_bitfield_mask(names: List[str]):
+    if len(names) == 0:
+        return 0
+    return " | ".join(f"{x}" for x in names)
 
 
 def write_text_file(path, content):
