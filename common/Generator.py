@@ -43,7 +43,7 @@ class BaseGenerator:
     def build(self):
         self.prepare_components()
 
-        ### SOURCE
+        ### SOURCE - ksystem.cpp
         source_file = SourceFile(is_header=False)
 
         # source_file.add_include("stdint.h", True)
@@ -96,7 +96,7 @@ class BaseGenerator:
         ksystem_cpp_path = os.path.join(self.output_dir, "ksystem.cpp")
         source_file.save(ksystem_cpp_path)
 
-        ### HEADER
+        ### HEADER - ksystem.h
         header_file = SourceFile(is_header=True)
 
         header_file.add_include("kdevice.h", system=False)
