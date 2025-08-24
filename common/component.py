@@ -41,3 +41,6 @@ class IComponent:
     @abstractmethod
     def get_additional_header_directories(self) -> List[str]:
         return []
+
+    def get_additional_linked_libraries(self) -> List[str]:
+        return []

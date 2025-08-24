@@ -127,10 +127,12 @@ class BaseGenerator:
         ### CMAKE
         sources = []
         include_dirs = []
+        linked_libs = []
 
         for component in self._components:
             sources += component.get_additional_source_files()
             include_dirs += component.get_additional_header_directories()
+            linked_libs += component.get_additional_linked_libraries()
 
         output_dir_abs = os.path.abspath(self.output_dir)
 
@@ -160,5 +162,10 @@ include_directories({get_path("library")})
   {nl.join(include_dirs)}
 )
 """.lstrip()
+
+        for lib in linked_libs:
+            cmake_content += f"""
+avr_target_link_libraries(ksystem "{lib}")
+"""
 
         write_text_file(os.path.join(self.output_dir, "ksystem.cmake"), cmake_content)
