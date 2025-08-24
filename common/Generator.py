@@ -4,6 +4,7 @@ import os
 
 from common.component import IComponent
 from generator.SourceFile import SourceFile
+from generator.StandaloneBlock import StandaloneBlock
 from generator.StatementsContainer import StatementsContainer
 from utils.utils import write_text_file
 
@@ -55,6 +56,7 @@ class BaseGenerator:
                     source_file.add_include(src_path, True)
 
         source_file.add_include("ksystem.h", system=False)
+        source_file.add_include("ksystem_internal.h", system=False)
 
         for component in self._components:
             component.emit_global_variables(source_file)
@@ -73,7 +75,8 @@ class BaseGenerator:
 
             for component in self._components:
                 f.add(cgen.LineComment(f"Component: {type(component).__name__}"))
-                component.emit_initialization(f)
+                with StandaloneBlock(f) as block:
+                    component.emit_initialization(block)
                 f.add_blank()
 
             f.add(cgen.Statement("setup()"))
