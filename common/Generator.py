@@ -50,6 +50,7 @@ class BaseGenerator:
 
         for component in self._components:
             if not component.verify():
+                print("verification failed")
                 exit(1)
             for src_path in component.get_source_includes():
                 if src_path is not None:
