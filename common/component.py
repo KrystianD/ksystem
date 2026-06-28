@@ -8,10 +8,12 @@ class IComponent:
         return True
 
     @abstractmethod
-    def get_source_includes(self) -> List[str]: ...
+    def get_source_includes(self) -> List[str]:
+        return []
 
     @abstractmethod
-    def get_header_includes(self) -> List[str]: ...
+    def get_header_includes(self) -> List[str]:
+        return []
 
     @abstractmethod
     def get_internal_header_includes(self) -> List[str]:
